@@ -1,4 +1,3 @@
-//decoder_5_32.v
 `include "defines.vh"
 module decoder_5_32 (
     input wire [4:0] in,

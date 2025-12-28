@@ -1,4 +1,3 @@
-//fa.v
 module fa (
   input a,b,cin,
   output s,c

@@ -1,4 +1,3 @@
-//mul.v
 module mul (
   input wire clk,
   input wire resetn,

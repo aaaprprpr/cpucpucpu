@@ -1,4 +1,3 @@
-//add.v
 module add (
   input wire [64:0] ina,
   input wire [64:0] inb,
