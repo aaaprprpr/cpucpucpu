@@ -32,7 +32,7 @@ module ID(
     output wire [`LoadBus-1:0] id_load_bus,  // ID阶段传递的Load信号
     output wire [`SaveBus-1:0] id_save_bus,  // ID阶段传递的Save信号
 
-    output wire stallreq_for_bru,  // 分支指令单元发出的停顿请求信号
+    output wire stallreq_for_load,  // 分支指令单元发出的停顿请求信号
 
     output wire [`ID_TO_EX_WD-1:0] id_to_ex_bus,  // 从ID阶段到EX阶段的数据总线
 
@@ -563,6 +563,6 @@ module ID(
     };
 
     // 当EX阶段需要写回的寄存器与当前ID阶段的源寄存器相同时，发出停顿请求load-use RAW
-    assign stallreq_for_bru = ex_id & (& ex_rf_we & (rs == ex_rf_waddr | rt == ex_rf_waddr)) ? `Stop : `NoStop;
+    assign stallreq_for_load = ex_id & (& ex_rf_we & (rs == ex_rf_waddr | rt == ex_rf_waddr)) ? `Stop : `NoStop;
 
 endmodule

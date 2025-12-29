@@ -48,7 +48,7 @@ wire [65:0] ex_hi_lo_bus;                      // EX阶段的HI/LO寄存器总�
 
 // 停顿请求信号
 wire stallreq_for_ex;       // EX阶段的停顿请求
-wire stallreq_for_bru;      // 分支操作的停顿请求
+wire stallreq_for_load;      // 分支操作的停顿请求
 
 IF u_IF(
     .clk             (clk             ),    
@@ -76,7 +76,7 @@ ID u_ID(
     .ex_id           (ex_id           ),    // EX阶段标识信号
     .id_load_bus     (id_load_bus     ),    // ID阶段Load信号
     .id_save_bus     (id_save_bus     ),    // ID阶段Save信号
-    .stallreq_for_bru(stallreq_for_bru),    // 分支操作的停顿请求信号
+    .stallreq_for_load(stallreq_for_load),    // 分支操作的停顿请求信号
     .br_bus          (br_bus          ),    // 分支信息
     .id_hi_lo_bus    (id_hi_lo_bus    ),    // ID阶段HI/LO寄存器总线
     .ex_hi_lo_bus    (ex_hi_lo_bus    )     // EX阶段HI/LO寄存器总线
@@ -131,7 +131,7 @@ WB u_WB(
 CTRL u_CTRL(
     .rst               (rst               ),    
     .stallreq_for_ex   (stallreq_for_ex   ),    // EX阶段的停顿请求信号
-    .stallreq_for_bru  (stallreq_for_bru  ),    // 分支操作的停顿请求信号
+    .stallreq_for_load  (stallreq_for_load  ),    // 分支操作的停顿请求信号
     .stall             (stall             )     // 停顿信号总线输出
 );
 
