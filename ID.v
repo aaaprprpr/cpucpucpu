@@ -20,11 +20,11 @@ module ID(
 
     input wire [31:0] inst_sram_rdata,  // 从指令SRAM读取的指令数据
 
-    input wire ex_id,  // EX阶段标识信号，用于转发相关操作
+    input wire ex_id,  // EX阶段标识信号，用于判定需要停顿的情况
 
-    input wire [`WB_TO_RF_WD-1:0] wb_to_rf_bus,  // 从WB阶段到寄存器文件的数据总线
-    input wire [`EX_TO_RF_WD-1:0] ex_to_rf_bus,  // 从EX阶段到寄存器文件的数据总线
-    input wire [`MEM_TO_RF_WD-1:0] mem_to_rf_bus,  // 从MEM阶段到寄存器文件的数据总线
+    input wire [`WB_TO_RF_WD-1:0] wb_to_rf_bus,  // 从WB阶段到寄存器文件的写回旁路
+    input wire [`EX_TO_RF_WD-1:0] ex_to_rf_bus,  // 从EX阶段到寄存器文件的数据旁路
+    input wire [`MEM_TO_RF_WD-1:0] mem_to_rf_bus,  // 从MEM阶段到寄存器文件的数据旁路，让ID能收到Load结果
     
     input wire [65:0] ex_hi_lo_bus,  // 从EX阶段传递的HI/LO寄存器相关信号
     output wire [71:0] id_hi_lo_bus,  // ID阶段传递给EX阶段的HI/LO寄存器相关信号
@@ -93,6 +93,7 @@ module ID(
     // 根据使能信号和标志位选择当前指令
     assign inst = ce ? flag ? buf_inst : inst_sram_rdata : 32'b0;
 
+    //普通ALU类 RAW  优先级EX > MEM > WB > regfile读值
     // 解码来自EX阶段的写回信号
     assign {
         ex_rf_we,
@@ -257,7 +258,6 @@ module ID(
     );
 
     // """算术运算指令"""
-
     // 加（可产生溢出例外）
     assign inst_add     = op_d[6'b00_0000] & func_d[6'b10_0000];
     // 加立即数（可产生溢出例外）
@@ -288,7 +288,6 @@ module ID(
     assign inst_multu   = op_d[6'b00_0000] & func_d[6'b01_1001] & rd_d[5'b0_0000] & sa_d[5'b0_0000];
 
     // """逻辑运算指令"""
-
     // 位与
     assign inst_and     = op_d[6'b00_0000] & func_d[6'b10_0100];
     // 立即数位与
@@ -307,7 +306,6 @@ module ID(
     assign inst_xori    = op_d[6'b00_1110];
 
     // """移位指令"""
-
     // 立即数逻辑左移
     assign inst_sll     = op_d[6'b00_0000] & func_d[6'b00_0000];
     // 变量逻辑左移
@@ -322,21 +320,16 @@ module ID(
     assign inst_srlv     = op_d[6'b00_0000] & func_d[6'b00_0110];
 
     // """分支跳转指令"""
-
     // 相等转移
     assign inst_beq     = op_d[6'b00_0100];
     // 不等转移
     assign inst_bne     = op_d[6'b00_0101];
-    // 大于等于0转移
-    assign inst_bnez     = op_d[6'b00_0001] & rt_d[5'b0_0001];
     // 大于0转移
     assign inst_bgtz     = op_d[6'b00_0111] & rt_d[5'b0_0000];
     // 小于等于0转移
     assign inst_blez     = op_d[6'b00_0110] & rt_d[5'b0_0000];
     // 小于0转移
     assign inst_bltz     = op_d[6'b00_0001] & rt_d[5'b0_0000];
-    // 小于0调用子程序并保存返回地址
-    assign inst_bgtzal     = op_d[6'b00_0001] & rt_d[5'b1_0000];
     // 大于等于0调用子程序并保存返回地址
     assign inst_bgezal     = op_d[6'b00_0001] & rt_d[5'b1_0001];
     // 大于等于0转移
@@ -364,7 +357,6 @@ module ID(
     assign inst_mtlo    = op_d[6'b00_0000] & func_d[6'b01_0011] & rt_d[5'b0_0000] & rd_d[5'b0_0000] & sa_d[5'b0_0000];
 
     // """访存指令"""
-
     // 取字节有符号扩展
     assign inst_lb      = op_d[6'b10_0000];
     // 取字节无符号扩展
@@ -570,8 +562,7 @@ module ID(
         br_addr     // 分支跳转地址
     };
 
-    // 当EX阶段需要写回的寄存器与当前ID阶段的源寄存器相同时，发出停顿请求
+    // 当EX阶段需要写回的寄存器与当前ID阶段的源寄存器相同时，发出停顿请求load-use RAW
     assign stallreq_for_bru = ex_id & (& ex_rf_we & (rs == ex_rf_waddr | rt == ex_rf_waddr)) ? `Stop : `NoStop;
-    // ((ex_rf_we == 1'b1 && ex_rf_waddr == rs) ? `Stop : `NoStop | (ex_rf_we == 1'b1 && ex_rf_waddr == rt) ? `Stop : `NoStop)
 
 endmodule

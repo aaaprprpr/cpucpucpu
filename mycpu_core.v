@@ -48,13 +48,12 @@ wire [65:0] ex_hi_lo_bus;                      // EX阶段的HI/LO寄存器总�
 
 // 停顿请求信号
 wire stallreq_for_ex;       // EX阶段的停顿请求
-wire stallreq_for_load;     // Load操作的停顿请求
 wire stallreq_for_bru;      // 分支操作的停顿请求
 
 IF u_IF(
-    .clk             (clk             ),    // 时钟信号
-    .rst             (rst             ),    // 重置信号
-    .stall           (stall           ),    // 停顿信号
+    .clk             (clk             ),    
+    .rst             (rst             ),    
+    .stall           (stall           ),    
     .br_bus          (br_bus          ),    // 分支信息
     .if_to_id_bus    (if_to_id_bus    ),    // IF到ID的数据总线
     .inst_sram_en    (inst_sram_en    ),    // 指令存储器使能
@@ -64,9 +63,9 @@ IF u_IF(
 );
 
 ID u_ID(
-    .clk             (clk             ),    // 时钟信号
-    .rst             (rst             ),    // 重置信号
-    .stall           (stall           ),    // 停顿信号
+    .clk             (clk             ),    
+    .rst             (rst             ),    
+    .stall           (stall           ),    
     .stallreq        (stallreq        ),    // 停顿请求信号（待定义）
     .if_to_id_bus    (if_to_id_bus    ),    // IF到ID的数据总线
     .inst_sram_rdata (inst_sram_rdata ),    // 指令存储器读数据
@@ -84,11 +83,10 @@ ID u_ID(
 );
 
 EX u_EX(
-    .clk             (clk             ),    // 时钟信号
-    .rst             (rst             ),    // 重置信号
-    .stall           (stall           ),    // 停顿信号
+    .clk             (clk             ),    
+    .rst             (rst             ),    
+    .stall           (stall           ),    
     .id_to_ex_bus    (id_to_ex_bus    ),    // ID到EX的数据总线
-    // .ex_to_id_bus    (ex_to_id_bus    ), // 注释掉的信号
     .ex_id           (ex_id           ),    // EX阶段标识信号
     .ex_to_rf_bus    (ex_to_rf_bus    ),    // EX到寄存器文件的数据总线
     .ex_to_mem_bus   (ex_to_mem_bus   ),    // EX到MEM的数据总线
@@ -106,23 +104,22 @@ EX u_EX(
 );
 
 MEM u_MEM(
-    .clk                (clk                ),  // 时钟信号
-    .rst                (rst                ),  // 重置信号
-    .stall              (stall              ),  // 停顿信号
+    .clk                (clk                ),  
+    .rst                (rst                ),  
+    .stall              (stall              ),  
     .ex_to_mem_bus      (ex_to_mem_bus      ),  // EX到MEM的数据总线
     .ex_load_bus        (ex_load_bus        ),  // EX阶段Load信号
     .data_sram_rdata    (data_sram_rdata    ),  // 数据存储器读数据
     .data_ram_sel       (data_ram_sel       ),  // 数据RAM选择信号
-    .stallreq_for_load  (stallreq_for_load  ),  // Load操作的停顿请求信号
     .mem_to_wb_bus      (mem_to_wb_bus      ),  // MEM到WB的数据总线
     .mem_to_rf_bus      (mem_to_rf_bus      )   // MEM到寄存器文件的数据总线
 );
 
 
 WB u_WB(
-    .clk               (clk               ),    // 时钟信号
-    .rst               (rst               ),    // 重置信号
-    .stall             (stall             ),    // 停顿信号
+    .clk               (clk               ),    
+    .rst               (rst               ),    
+    .stall             (stall             ),    
     .mem_to_wb_bus     (mem_to_wb_bus     ),    // MEM到WB的数据总线
     .wb_to_rf_bus      (wb_to_rf_bus      ),    // WB到寄存器文件的数据总线
     .debug_wb_pc       (debug_wb_pc       ),    // 写回阶段的PC值
@@ -132,9 +129,8 @@ WB u_WB(
 );
 
 CTRL u_CTRL(
-    .rst               (rst               ),    // 重置信号
+    .rst               (rst               ),    
     .stallreq_for_ex   (stallreq_for_ex   ),    // EX阶段的停顿请求信号
-    .stallreq_for_load (stallreq_for_load ),    // Load操作的停顿请求信号
     .stallreq_for_bru  (stallreq_for_bru  ),    // 分支操作的停顿请求信号
     .stall             (stall             )     // 停顿信号总线输出
 );

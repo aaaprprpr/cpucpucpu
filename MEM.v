@@ -20,8 +20,6 @@ module MEM(
 
     input wire [`LoadBus-1:0] ex_load_bus,  // 从EX阶段传递的Load指令信号
 
-    output wire stallreq_for_load,  // 对Load操作发出的停顿请求信号
-
     output wire [`MEM_TO_WB_WD-1:0] mem_to_wb_bus,  // 从MEM阶段传递到WB阶段的数据总线
 
     output wire [`MEM_TO_RF_WD-1:0] mem_to_rf_bus  // 从MEM阶段传递到寄存器文件的数据总线
@@ -82,7 +80,7 @@ module MEM(
         sel_rf_res,     // 38    - 寄存器文件结果选择
         rf_we,          // 37    - 寄存器文件写使能
         rf_waddr,       // 36:32 - 寄存器文件写地址
-        ex_result       // 31:0  - 来自EX阶段的运算结果
+        ex_result       // 31:0  - 来自EX阶段的运算结果（对Load是访存地址；对非Load是运算结果）
     } = ex_to_mem_bus_r;
 
     // 解包Load指令信号
@@ -131,7 +129,6 @@ module MEM(
 
     // 将数据传递到寄存器文件
     assign mem_to_rf_bus = {
-        // mem_pc,   // 69:38 - 当前指令的PC（如果需要）
         rf_we,     // 37    - 寄存器文件写使能
         rf_waddr,  // 36:32 - 寄存器文件写地址
         rf_wdata   // 31:0  - 寄存器文件写数据

@@ -30,7 +30,8 @@ module div(
 			state <= `DivFree;
 			result_o <= {`ZeroWord,`ZeroWord};
 			ready_o <= `DivResultNotReady;
-		end else begin
+		end 
+		else begin
 			case(state)
 			
 				`DivFree: begin			//除法器空闲

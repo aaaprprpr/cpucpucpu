@@ -31,7 +31,7 @@ module EX(
     output wire [3:0] data_sram_wen,      // 数据SRAM写使能信号
     output wire [31:0] data_sram_addr,    // 数据SRAM地址
     output wire [31:0] data_sram_wdata,   // 数据SRAM写数据
-    output wire ex_id,                    // EX阶段标识信号
+    output wire ex_id,                    // EX阶段标识信号，用于判定需要停顿的情况
     output wire [3:0] data_ram_sel,       // 数据RAM选择信号
     output wire [`LoadBus-1:0] ex_load_bus  // EX阶段Load信号总线，传递具体的Load指令类型
 );
@@ -180,7 +180,7 @@ module EX(
         ex_result       // 31:0    - EX阶段运算结果
     };
 
-    assign ex_id = sel_rf_res;  // EX阶段标识信号，指示是否需要将结果写回寄存器
+    assign ex_id = sel_rf_res;  // EX阶段标识信号，用于判定需要停顿的情况
 
     // 转发信号，传递结果到寄存器文件
     assign ex_to_rf_bus = {
@@ -299,8 +299,8 @@ module EX(
             div_start_o = `DivStop;
             signed_div_o = 1'b0;
             case ({inst_div, inst_divu})
-                2'b10: begin
-                    // 有符号除法指令
+                2'b10: begin// 有符号除法指令
+                    
                     if (div_ready_i == `DivResultNotReady) begin
                         // 除法结果未准备好，启动除法运算并请求停顿
                         div_opdata1_o = rf_rdata1;
@@ -326,8 +326,8 @@ module EX(
                         stallreq_for_div = `NoStop;
                     end
                 end
-                2'b01: begin
-                    // 无符号除法指令
+                2'b01: begin// 无符号除法指令
+                    
                     if (div_ready_i == `DivResultNotReady) begin
                         // 除法结果未准备好，启动除法运算并请求停顿
                         div_opdata1_o = rf_rdata1;
