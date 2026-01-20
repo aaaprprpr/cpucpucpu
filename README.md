@@ -27,19 +27,28 @@ pip install ultralytics
 
 ## block.py
 包含以下关键网络组件：
-[ConvBNReLU]: 卷积+批归一化+激活函数组合模块
-[h_swish]: H-Swish激活函数
-[SE_Attention]: SE注意力机制模块
-[InvertedResidual]: 倒残差块，MobileNet的核心组件
+[ConvBNReLU]
+- 卷积+批归一化+激活函数组合模块
+[h_swish]
+- H-Swish激活函数
+[SE_Attention]
+- SE注意力机制模块
+[InvertedResidual]
+- 倒残差块，MobileNet的核心组件
 
 ## 模型配置
-[yolo-pose.yaml]: YOLO的模型配置
-[mobilenet.yaml]: 使用倒残差块的模型配置
+[yolo-pose.yaml]
+- YOLO的模型配置
+[mobilenet.yaml]
+- 使用倒残差块的模型配置
 
 ## 训练与推理
-[train.py]: 模型训练入口
-[solvepnp.py]: 识别和解算的可视化
-[predictv.py]: 视频预测脚本
+[train.py]
+- 模型训练入口
+[solvepnp.py]
+- 识别和解算的可视化
+[predictv.py]
+- 视频预测脚本
 
 ## 识别和姿态解算
 [solvepnp.py]
